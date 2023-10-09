@@ -1,0 +1,73 @@
+running: "cc" "-O0" "-ffunction-sections" "-fdata-sections" "-fPIC" "-gdwarf-4" "-fno-omit-frame-pointer" "-m64" "-Wall" "-Wextra" "-o" "/home/faytey7/Desktop/metro_eletrik_near/contract/target/debug/build/parity-secp256k1-c3972d9ed958a09d/out/depend/check_uint128_t.o" "-c" "depend/check_uint128_t.c"
+exit status: 0
+running: ZERO_AR_DATE="1" "ar" "cq" "/home/faytey7/Desktop/metro_eletrik_near/contract/target/debug/build/parity-secp256k1-c3972d9ed958a09d/out/libcheck_uint128_t.a" "/home/faytey7/Desktop/metro_eletrik_near/contract/target/debug/build/parity-secp256k1-c3972d9ed958a09d/out/depend/check_uint128_t.o"
+exit status: 0
+running: "ar" "s" "/home/faytey7/Desktop/metro_eletrik_near/contract/target/debug/build/parity-secp256k1-c3972d9ed958a09d/out/libcheck_uint128_t.a"
+exit status: 0
+TARGET = Some("x86_64-unknown-linux-gnu")
+OPT_LEVEL = Some("0")
+HOST = Some("x86_64-unknown-linux-gnu")
+cargo:rerun-if-env-changed=CC_x86_64-unknown-linux-gnu
+CC_x86_64-unknown-linux-gnu = None
+cargo:rerun-if-env-changed=CC_x86_64_unknown_linux_gnu
+CC_x86_64_unknown_linux_gnu = None
+cargo:rerun-if-env-changed=HOST_CC
+HOST_CC = None
+cargo:rerun-if-env-changed=CC
+CC = None
+cargo:rerun-if-env-changed=CRATE_CC_NO_DEFAULTS
+CRATE_CC_NO_DEFAULTS = None
+CARGO_CFG_TARGET_FEATURE = Some("fxsr,sse,sse2")
+cargo:rerun-if-env-changed=CFLAGS_x86_64-unknown-linux-gnu
+CFLAGS_x86_64-unknown-linux-gnu = None
+cargo:rerun-if-env-changed=CFLAGS_x86_64_unknown_linux_gnu
+CFLAGS_x86_64_unknown_linux_gnu = None
+cargo:rerun-if-env-changed=HOST_CFLAGS
+HOST_CFLAGS = None
+cargo:rerun-if-env-changed=CFLAGS
+CFLAGS = None
+cargo:rerun-if-env-changed=CC_x86_64-unknown-linux-gnu
+CC_x86_64-unknown-linux-gnu = None
+cargo:rerun-if-env-changed=CC_x86_64_unknown_linux_gnu
+CC_x86_64_unknown_linux_gnu = None
+cargo:rerun-if-env-changed=HOST_CC
+HOST_CC = None
+cargo:rerun-if-env-changed=CC
+CC = None
+cargo:rerun-if-env-changed=CRATE_CC_NO_DEFAULTS
+CRATE_CC_NO_DEFAULTS = None
+CARGO_CFG_TARGET_FEATURE = Some("fxsr,sse,sse2")
+cargo:rerun-if-env-changed=CFLAGS_x86_64-unknown-linux-gnu
+CFLAGS_x86_64-unknown-linux-gnu = None
+cargo:rerun-if-env-changed=CFLAGS_x86_64_unknown_linux_gnu
+CFLAGS_x86_64_unknown_linux_gnu = None
+cargo:rerun-if-env-changed=HOST_CFLAGS
+HOST_CFLAGS = None
+cargo:rerun-if-env-changed=CFLAGS
+CFLAGS = None
+running: "cc" "-O0" "-ffunction-sections" "-fdata-sections" "-fPIC" "-gdwarf-4" "-fno-omit-frame-pointer" "-m64" "-I" "depend/secp256k1/" "-I" "depend/secp256k1/include" "-I" "depend/secp256k1/src" "-Wall" "-Wextra" "-Wno-unused-function" "-DSECP256K1_BUILD=1" "-DECMULT_WINDOW_SIZE=8" "-DECMULT_GEN_PREC_BITS=4" "-DUSE_NUM_NONE=1" "-DUSE_FIELD_INV_BUILTIN=1" "-DUSE_SCALAR_INV_BUILTIN=1" "-DUSE_ENDOMORPHISM=1" "-DENABLE_MODULE_ECDH=1" "-DENABLE_MODULE_RECOVERY=1" "-DUSE_FIELD_5X52=1" "-DUSE_SCALAR_4X64=1" "-DHAVE___INT128=1" "-o" "/home/faytey7/Desktop/metro_eletrik_near/contract/target/debug/build/parity-secp256k1-c3972d9ed958a09d/out/depend/secp256k1/contrib/lax_der_parsing.o" "-c" "depend/secp256k1/contrib/lax_der_parsing.c"
+exit status: 0
+running: "cc" "-O0" "-ffunction-sections" "-fdata-sections" "-fPIC" "-gdwarf-4" "-fno-omit-frame-pointer" "-m64" "-I" "depend/secp256k1/" "-I" "depend/secp256k1/include" "-I" "depend/secp256k1/src" "-Wall" "-Wextra" "-Wno-unused-function" "-DSECP256K1_BUILD=1" "-DECMULT_WINDOW_SIZE=8" "-DECMULT_GEN_PREC_BITS=4" "-DUSE_NUM_NONE=1" "-DUSE_FIELD_INV_BUILTIN=1" "-DUSE_SCALAR_INV_BUILTIN=1" "-DUSE_ENDOMORPHISM=1" "-DENABLE_MODULE_ECDH=1" "-DENABLE_MODULE_RECOVERY=1" "-DUSE_FIELD_5X52=1" "-DUSE_SCALAR_4X64=1" "-DHAVE___INT128=1" "-o" "/home/faytey7/Desktop/metro_eletrik_near/contract/target/debug/build/parity-secp256k1-c3972d9ed958a09d/out/depend/ext.o" "-c" "depend/ext.c"
+exit status: 0
+cargo:rerun-if-env-changed=AR_x86_64-unknown-linux-gnu
+AR_x86_64-unknown-linux-gnu = None
+cargo:rerun-if-env-changed=AR_x86_64_unknown_linux_gnu
+AR_x86_64_unknown_linux_gnu = None
+cargo:rerun-if-env-changed=HOST_AR
+HOST_AR = None
+cargo:rerun-if-env-changed=AR
+AR = None
+cargo:rerun-if-env-changed=ARFLAGS_x86_64-unknown-linux-gnu
+ARFLAGS_x86_64-unknown-linux-gnu = None
+cargo:rerun-if-env-changed=ARFLAGS_x86_64_unknown_linux_gnu
+ARFLAGS_x86_64_unknown_linux_gnu = None
+cargo:rerun-if-env-changed=HOST_ARFLAGS
+HOST_ARFLAGS = None
+cargo:rerun-if-env-changed=ARFLAGS
+ARFLAGS = None
+running: ZERO_AR_DATE="1" "ar" "cq" "/home/faytey7/Desktop/metro_eletrik_near/contract/target/debug/build/parity-secp256k1-c3972d9ed958a09d/out/libsecp256k1.a" "/home/faytey7/Desktop/metro_eletrik_near/contract/target/debug/build/parity-secp256k1-c3972d9ed958a09d/out/depend/secp256k1/contrib/lax_der_parsing.o" "/home/faytey7/Desktop/metro_eletrik_near/contract/target/debug/build/parity-secp256k1-c3972d9ed958a09d/out/depend/ext.o"
+exit status: 0
+running: "ar" "s" "/home/faytey7/Desktop/metro_eletrik_near/contract/target/debug/build/parity-secp256k1-c3972d9ed958a09d/out/libsecp256k1.a"
+exit status: 0
+cargo:rustc-link-lib=static=secp256k1
+cargo:rustc-link-search=native=/home/faytey7/Desktop/metro_eletrik_near/contract/target/debug/build/parity-secp256k1-c3972d9ed958a09d/out

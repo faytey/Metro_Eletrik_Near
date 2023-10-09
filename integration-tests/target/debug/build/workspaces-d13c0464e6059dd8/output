@@ -1,0 +1,1 @@
+cargo:rerun-if-env-changed=NEAR_SANDBOX_BIN_PATH
