@@ -56,17 +56,6 @@ impl Default for Contract{
 // Implement the contract structure
 #[near_bindgen]
 impl Contract {
-    // Public method - returns the greeting saved, defaulting to DEFAULT_MESSAGE
-    pub fn get_greeting(&self) -> String {
-        return self.message.clone();
-    }
-
-    // Public method - accepts a greeting, such as "howdy", and records it
-    pub fn set_greeting(&mut self, message: String) {
-        log!("Saving greeting {}", message);
-        self.message = message;
-    }
-
     fn create_disco(&mut self, name: String, unit_price: u128, disco_wallet: String) {
         assert_eq(unit_price > 0, "Invalid unit price");
         assert_eq(!name == "", "Invalid name");
@@ -106,7 +95,21 @@ impl Contract {
         log!("Set new unit price: {}", new_price);
     }
 
-    
+    #[payable]
+    fn subscribe(&mut self, unit_amount: u128, disco_acct: String, meter_no: u128) {
+        assert_eq(unit_amount >= wallet_to_disco(disco_acct.to_string()));
+
+        // transfer coin from user to disco account
+        self.Users = User.push(
+            wallet,
+            meter_no,
+            new_sub: unit_amount,
+            total_sub: total_sub += unit_amount,
+        )
+        
+        self.total_subs = total_subs + unit_amount;
+        log!("New subscription: account: {}, meter num: {}, units: {}", msg.sender, meter_no, unit_amount);
+    }
     
 
 }
