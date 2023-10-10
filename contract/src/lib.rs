@@ -14,7 +14,7 @@ const USDC: String = String::from("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48");
 #[derive(BorshDeserialize, BorshSerialize)]
 pub struct Contract {
     airdrop_data: UnorderedMap<String, bool>,
-    wallet_to_disco: UnorderedMap<String, String>,
+    wallet_to_disco: UnorderedMap<String, Disco>,
     controller: String,
     metr: METR,
     usdc: USDC,
@@ -79,7 +79,12 @@ impl Contract {
             unit_price,
         )
 
-        self.wallet_to_disco = wallet_to_disco.insert(k: String::from(disco_wallet).to_string(), v: String::from(name));
+        self.wallet_to_disco = wallet_to_disco.insert(k: String::from(disco_wallet).to_string(), v: Disco {
+            name,
+            disco_wallet,
+            admin_wallet: msg.sender,
+            unit_price,
+        });
         log!("{} created", name);
     }
 
@@ -87,6 +92,21 @@ impl Contract {
         self.Disco_list.clone()
     }
 
+    fn set_unit_price(&mut self, disco_wallet: String, new_price: u128) {
+        assert_eq(new_price > 0, "Invalid value");
+        assert_eq(caller == admin_wallet, "unauthorized caller");
+
+        self.wallet_to_disco = wallet_to_disco.insert(k: String::from(disco_wallet), v: Disco {
+            name,
+            disco_wallet,
+            admin_wallet,
+            unit_price: new_price,
+        })
+
+        log!("Set new unit price: {}", new_price);
+    }
+
+    
     
 
 }
