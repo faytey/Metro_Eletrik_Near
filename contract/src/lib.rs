@@ -6,16 +6,21 @@ use std::collections::HashMap;
 
 
 // Define the default message
-const METR: &str = "0xF2761f79E26BEC23906A59aD10e777e3b1b2dEF3";
+const METR: String = String::from("0xF2761f79E26BEC23906A59aD10e777e3b1b2dEF3");
+const USDC: String = String::from("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48");
 
 // Define the contract structure
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize)]
 pub struct Contract {
-    airdrop_data: HashMap<String, bool>,
-    wallet_to_disco: HashMap<String, Disco>,
+    airdrop_data: UnorderedMap<String, bool>,
+    wallet_to_disco: UnorderedMap<String, String>,
     controller: String,
-    METR: &str,
+    metr: METR,
+    usdc: USDC,
+    total_subs: u128,
+    Disco_list: Vec<Disco>,
+    Users: Vec<User>,
 }
 
 
@@ -27,10 +32,24 @@ struct Disco {
     unit_price: u128,
 }
 
+struct User {
+    wallet: String,
+    meter_no: String,
+    new_sub: u128,
+    total_sub: u128,
+}
+
 // Define the default, which automatically initializes the contract
 impl Default for Contract{
-    fn default() -> Self{
-        Self{message: DEFAULT_MESSAGE.to_string()}
+    fn default() -> Self {
+        Self{airdrop_data: UnorderedMap::new()},
+        Self{wallet_to_disco: UnorderedMap::new()},
+        Self{controller: String.to_string()},
+        Self{metr: METR.to_string() },
+        Self{usdc: USDC.to_string() },
+        Self{total_subs: u128},
+        Self{Disco_list: Vec<Disco>},
+        Self{Users: Vec<User>},
     }
 }
 
@@ -47,6 +66,29 @@ impl Contract {
         log!("Saving greeting {}", message);
         self.message = message;
     }
+
+    fn create_disco(&mut self, name: String, unit_price: u128, disco_wallet: String) {
+        assert_eq(unit_price > 0, "Invalid unit price");
+        assert_eq(!name == "", "Invalid name");
+        assert_eq(!disco_acct == "", "Invalid account");
+
+        self.Disco_list = Disco_list.push(
+            name,
+            disco_wallet,
+            admin_wallet: msg.sender,
+            unit_price,
+        )
+
+        self.wallet_to_disco = wallet_to_disco.insert(k: String::from(disco_wallet).to_string(), v: String::from(name));
+        log!("{} created", name);
+    }
+
+    fn get_discos(&self) -> Vec<Disco> {
+        self.Disco_list.clone()
+    }
+
+    
+
 }
 
 /*
