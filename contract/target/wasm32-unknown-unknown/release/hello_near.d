@@ -1,1 +1,1 @@
-/home/faytey7/Desktop/metro_eletrik_near/contract/target/wasm32-unknown-unknown/release/hello_near.wasm: /home/faytey7/Desktop/metro_eletrik_near/contract/src/lib.rs
+/home/evanseth/DApps/Near/Metro_Eletrik_Near/contract/target/wasm32-unknown-unknown/release/hello_near.wasm: /home/evanseth/DApps/Near/Metro_Eletrik_Near/contract/src/lib.rs

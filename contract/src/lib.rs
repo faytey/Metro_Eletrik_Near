@@ -1,15 +1,30 @@
 // Find all our documentation at https://docs.near.org
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::{log, near_bindgen};
+use std::collections::HashMap;
+
+
 
 // Define the default message
-const DEFAULT_MESSAGE: &str = "Hello";
+const METR: &str = "0xF2761f79E26BEC23906A59aD10e777e3b1b2dEF3";
 
 // Define the contract structure
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize)]
 pub struct Contract {
-    message: String,
+    airdrop_data: HashMap<String, bool>,
+    wallet_to_disco: HashMap<String, Disco>,
+    controller: String,
+    METR: &str,
+}
+
+
+#[derive(BorshDeserialize, BorshSerialize)]
+struct Disco {
+    name: String,
+    disco_wallet: String,
+    admin_wallet: String,
+    unit_price: u128,
 }
 
 // Define the default, which automatically initializes the contract
@@ -62,3 +77,5 @@ mod tests {
         );
     }
 }
+
+//COMPILE CLI: env RUSTFLAGS='-C link-arg=-s' cargo +stable build --target wasm32-unknown-unknown --release
