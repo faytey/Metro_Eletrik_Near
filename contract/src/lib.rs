@@ -1,28 +1,28 @@
-// Find all our documentation at https://docs.near.org
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-use near_sdk::{log, near_bindgen};
-use std::collections::HashMap;
+use near_sdk::serde::{Deserialize, Serialize};
+use near_sdk::{env, log, near_bindgen, Promise};
+use near_sdk::collections::UnorderedMap;
 
+// Define METR as a type alias for String
+type METR = String;
+type USDC = String;
 
-const METR: String = String::from("0xF2761f79E26BEC23906A59aD10e777e3b1b2dEF3");
-const USDC: String = String::from("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48");
+const USDC: &str = "a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.factory.bridge.near";
 
 // Define the contract structure
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize)]
 pub struct Contract {
-    airdrop_data: UnorderedMap<String, bool>,
     wallet_to_disco: UnorderedMap<String, Disco>,
-    controller: String,
+    admin: String, // Admin account ID
     metr: METR,
     usdc: USDC,
     total_subs: u128,
     Disco_list: Vec<Disco>,
-    Users: Vec<User>,
+    Users: UnorderedMap<String, User>,
 }
 
-
-#[derive(BorshDeserialize, BorshSerialize)]
+#[derive(Serialize, Deserialize, BorshDeserialize, BorshSerialize, Clone)]
 struct Disco {
     name: String,
     disco_wallet: String,
@@ -30,6 +30,7 @@ struct Disco {
     unit_price: u128,
 }
 
+#[derive(Serialize, Deserialize, BorshDeserialize, BorshSerialize, Clone)]
 struct User {
     wallet: String,
     meter_no: String,
@@ -37,108 +38,134 @@ struct User {
     total_sub: u128,
 }
 
-// Define the default, which automatically initializes the contract
-impl Default for Contract{
-    fn default() -> Self {
-        Self{airdrop_data: UnorderedMap::new()},
-        Self{wallet_to_disco: UnorderedMap::new()},
-        Self{controller: String.to_string()},
-        Self{metr: METR.to_string() },
-        Self{usdc: USDC.to_string() },
-        Self{total_subs: u128},
-        Self{Disco_list: Vec<Disco>},
-        Self{Users: Vec<User>},
-    }
-}
-
 // Implement the contract structure
 #[near_bindgen]
 impl Contract {
-    fn create_disco(&mut self, name: String, unit_price: u128, disco_wallet: String) {
-        assert_eq(unit_price > 0, "Invalid unit price");
-        assert_eq(!name == "", "Invalid name");
-        assert_eq(!disco_acct == "", "Invalid account");
+    #[init]
+    pub fn new(admin: String, metr: METR, usdc: USDC) -> Self {
+        // Initialize the contract with the provided parameters.
+        Self {
+            wallet_to_disco: UnorderedMap::new(b"n"),
+            admin,
+            metr,
+            usdc,
+            total_subs: 0,
+            Disco_list: Vec::new(),
+            Users: UnorderedMap::new(b"u"),
+        }
+    }
 
-        self.Disco_list = Disco_list.push(
-            name,
-            disco_wallet,
-            admin_wallet: msg.sender,
-            unit_price,
-        )
+    pub fn create_disco(&mut self, name: String, unit_price: u128, disco_wallet: String) {
+        assert!(unit_price > 0, "Invalid unit price");
+        assert!(name != "", "Invalid name");
 
-        self.wallet_to_disco = wallet_to_disco.insert(k: String::from(disco_wallet).to_string(), v: Disco {
-            name,
-            disco_wallet,
-            admin_wallet: msg.sender,
+        let new_disco = Disco {
+            name: name.clone(),
+            disco_wallet: disco_wallet.clone(),
+            admin_wallet: env::predecessor_account_id(),
             unit_price,
-        });
+        };
+
+        self.Disco_list.push(new_disco.clone());
+
+        self.wallet_to_disco.insert(&disco_wallet, &new_disco);
+
         log!("{} created", name);
     }
 
-    fn get_discos(&self) -> Vec<Disco> {
+    pub fn get_discos(&self) -> Vec<Disco> {
         self.Disco_list.clone()
     }
 
-    fn set_unit_price(&mut self, disco_wallet: String, new_price: u128) {
-        assert_eq(new_price > 0, "Invalid value");
-        assert_eq(caller == admin_wallet, "unauthorized caller");
+    pub fn set_unit_price(&mut self, disco_wallet: String, new_price: u128) {
+        assert!(new_price > 0, "Invalid value");
+        assert!(env::predecessor_account_id(), self.wallet_to_disco[&disco_wallet].admin_wallet, "Unauthorized caller");
 
-        self.wallet_to_disco = wallet_to_disco.insert(k: String::from(disco_wallet), v: Disco {
-            name,
-            disco_wallet,
-            admin_wallet,
+        self.wallet_to_disco.insert(&disco_wallet, &Disco {
+            name: self.wallet_to_disco[&disco_wallet].name.clone(),
+            disco_wallet: disco_wallet.clone(),
+            admin_wallet: env::predecessor_account_id(),
             unit_price: new_price,
-        })
+        });
 
         log!("Set new unit price: {}", new_price);
     }
 
-    #[payable]
-    fn subscribe(&mut self, unit_amount: u128, disco_acct: String, meter_no: u128) {
-        assert_eq(unit_amount >= wallet_to_disco(disco_acct.to_string()));
-
-        // transfer coin from user to disco account
-        self.Users = User.push(
-            wallet,
-            meter_no,
-            new_sub: unit_amount,
-            total_sub: total_sub += unit_amount,
-        )
+    pub fn buy_units_with_usdc(&mut self, unit_amount: u128, meter_no: String) {
+        let disco_wallet = self.wallet_to_disco.iter().find(|(_, disco)| disco.unit_price <= unit_amount);
         
-        self.total_subs = total_subs + unit_amount;
-        log!("New subscription: account: {}, meter num: {}, units: {}", msg.sender, meter_no, unit_amount);
-    }
-    
+        if let Some((disco_wallet, disco)) = disco_wallet {
+            assert!(unit_amount >= disco.unit_price, "Invalid unit price");
 
+            let usdc: String = self.usdc.clone();
+            let wallet = env::predecessor_account_id();
+
+            // Transfer USDC tokens (assumed as NEAR tokens) to the contract.
+            let transfer = Promise::new(usdc).transfer(unit_amount);
+            transfer.then(ext_self::handle_buy_units_with_usdc(
+                disco_wallet,
+                meter_no,
+                wallet,
+                unit_amount,
+            )).return_as_result().expect("USDC transfer failed");
+        } else {
+            env::panic("buy_units_with_usdc: No valid disco wallet found for this unit price".as_bytes());
+        }
+    }
+
+    pub fn buy_units_with_near(&mut self, disco_wallet: String, meter_no: String) {
+        let attached_balance = env::attached_deposit();
+        let unit_amount = self.wallet_to_disco[&disco_wallet].unit_price;
+
+        // Check for valid unit price and meter number.
+        if unit_amount <= 0 || attached_balance < unit_amount || meter_no.is_empty() {
+            env::panic("buy_units_with_near: Invalid unit price, meter number, or attached deposit".as_bytes());
+        }
+
+        // Transfer NEAR tokens to the contract as Ether.
+        let transfer_success = Promise::new(env::predecessor_account_id()).transfer(unit_amount);
+        transfer_success.then(ext_self::handle_buy_units_with_near(
+            disco_wallet,
+            meter_no,
+            attached_balance,
+        )).return_as_result().expect("Near transfer failed");
+    }
+
+    pub fn withdraw_near(&self, to: String, amount: u128) {
+        // Check if the sender is the admin.
+        assert!(env::predecessor_account_id(), self.admin, "Only admin can withdraw NEAR tokens");
+
+        // Ensure a valid destination account and a non-zero amount.
+        assert!(env::is_valid_account_id(to.as_bytes()), "Invalid destination account");
+        assert!(amount > 0, "Invalid amount");
+
+        // Transfer NEAR tokens to the specified account.
+        let transfer = Promise::new(to).transfer(amount);
+        transfer.return_as_result().expect("Failed to send NEAR tokens");
+    }
+
+    pub fn withdraw_usdc(&self, to: String, amount: u128) {
+        // Check if the sender is the admin.
+        assert!(env::predecessor_account_id(), self.admin, "Only admin can withdraw USDC tokens");
+
+        // Ensure a valid destination account and a non-zero amount.
+        assert!(env::is_valid_account_id(to.as_bytes()), "Invalid destination account");
+        assert!(amount > 0, "Invalid amount");
+
+        // Call the USDC contract on NEAR to transfer tokens to the specified account.
+        let transfer_to = json!({
+            "receiver_id": to,
+            "amount": amount.to_string(),
+            "memo": "USDC transfer"
+        }).to_string();
+
+        let usdc = self.usdc.clone();
+        let usdc_contract = self.usdc.clone();
+
+        let promise = Promise::new(usdc)
+            .function_call("ft_transfer", transfer_to.as_bytes(), 0, env::storage_usage());
+        promise.then(ext_self::handle_withdraw_usdc(usdc_contract, to, amount))
+            .return_as_result()
+            .expect("Failed to send USDC tokens");
+    }
 }
-
-/*
- * The rest of this file holds the inline tests for the code above
- * Learn more about Rust tests: https://doc.rust-lang.org/book/ch11-01-writing-tests.html
- */
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn get_default_greeting() {
-        let contract = Contract::default();
-        // this test did not call set_greeting so should return the default "Hello" greeting
-        assert_eq!(
-            contract.get_greeting(),
-            "Hello".to_string()
-        );
-    }
-
-    #[test]
-    fn set_then_get_greeting() {
-        let mut contract = Contract::default();
-        contract.set_greeting("howdy".to_string());
-        assert_eq!(
-            contract.get_greeting(),
-            "howdy".to_string()
-        );
-    }
-}
-
-//COMPILE CLI: env RUSTFLAGS='-C link-arg=-s' cargo +stable build --target wasm32-unknown-unknown --release
