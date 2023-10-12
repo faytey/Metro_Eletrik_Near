@@ -119,7 +119,7 @@ impl Contract {
 
         // Check for valid unit price and meter number.
         if unit_amount <= 0 || attached_balance < unit_amount || meter_no.is_empty() {
-            env::panic("buy_units_with_near: Invalid unit price, meter number, or attached deposit".as_bytes());
+            env::panic_str("buy_units_with_near: Invalid unit price, meter number, or attached deposit".as_bytes());
         }
 
         // Transfer NEAR tokens to the contract as Ether.
@@ -133,7 +133,7 @@ impl Contract {
 
     pub fn withdraw_near(&self, to: String, amount: u128) {
         // Check if the sender is the admin.
-        assert!(env::predecessor_account_id(), self.admin, "Only admin can withdraw NEAR tokens");
+        assert!(env::predecessor_account_id(), self.wallet_to_disco[&disco_wallet].admin_wallet, "Only admin can withdraw NEAR tokens");
 
         // Ensure a valid destination account and a non-zero amount.
         assert!(env::is_valid_account_id(to.as_bytes()), "Invalid destination account");
@@ -146,7 +146,7 @@ impl Contract {
 
     pub fn withdraw_usdc(&self, to: String, amount: u128) {
         // Check if the sender is the admin.
-        assert!(env::predecessor_account_id(), self.admin, "Only admin can withdraw USDC tokens");
+        assert!(env::predecessor_account_id(), self.wallet_to_disco[&disco_wallet].admin_wallet, "Only admin can withdraw USDC tokens");
 
         // Ensure a valid destination account and a non-zero amount.
         assert!(env::is_valid_account_id(to.as_bytes()), "Invalid destination account");
@@ -169,3 +169,5 @@ impl Contract {
             .expect("Failed to send USDC tokens");
     }
 }
+
+//Compile CMD: env RUSTFLAGS='-C link-arg=-s' cargo +stable build --target wasm32-unknown-unknown --release
